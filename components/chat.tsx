@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import axios from "axios";
 import {
   Dialog,
@@ -16,6 +16,7 @@ import {
   MessageList,
 } from "@chatscope/chat-ui-kit-react";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+import "./chat.css";
 
 interface MessageModel {
   role: string;
@@ -37,6 +38,10 @@ const ChatComponent = () => {
     const response = await axios.get("/api/token");
     setToken(response.data.token);
   };
+
+  useEffect(() => {
+    getToken();
+  }, []);
 
   const startConversation = async () => {
     const response = await axios.post("/api/conversation", { token });
@@ -84,7 +89,7 @@ const ChatComponent = () => {
 
   return (
     <div>
-      <button onClick={getToken}>Get Token</button>
+      {/* <button onClick={getToken}>Get Token</button> */}
       <button onClick={startConversation} className="ml-2">
         Start Conversation
       </button>
@@ -99,79 +104,97 @@ const ChatComponent = () => {
           <div key={index}>{msg["text"]}</div>
         ))}
       </div>
-      <div style={{ position: "relative", height: "500px" }}>
-        <MainContainer>
-          <ChatContainer>
-            <MessageList>
-              {msg.map((messageEvent, index) => {
-                switch (messageEvent.role) {
-                  case "user":
-                    return (
-                      <Message
-                        key={index}
-                        model={{
-                          message: messageEvent.content,
-                          sentTime: "just now",
-                          sender: messageEvent.name,
-                          position: "single",
-                          direction: "outgoing",
-                        }}
-                        avatarPosition="tr"
-                      ></Message>
-                    );
-                  case "system":
-                    return (
-                      <Message
-                        key={index}
-                        model={{
-                          message: messageEvent.content,
-                          sentTime: "just now",
-                          sender: messageEvent.name,
-                          position: "single",
-                          direction: "incoming",
-                        }}
-                        avatarPosition="tr"
-                      ></Message>
-                    );
-                  case "initial":
-                    return (
-                      <Message
-                        key={index}
-                        model={{
-                          message: messageEvent.content,
-                          sentTime: "just now",
-                          sender: messageEvent.name,
-                          position: "single",
-                          direction: "outgoing",
-                        }}
-                        avatarPosition="tl"
-                      >
-                        <Message.HtmlContent html={messageEvent.content} />
-                      </Message>
-                    );
-                  default:
-                    return null;
-                }
-              })}
 
-              <Message
-                model={{
-                  message: "Hello my friend",
-                  sentTime: "just now",
-                  sender: "Joe",
-                  direction: "incoming",
-                  position: "single",
-                }}
-              />
-            </MessageList>
-            <MessageInput
-              placeholder={"Type a message..."}
-              onSend={sendUserMessage}
-              attachButton={false}
-            />
-          </ChatContainer>
-        </MainContainer>
-      </div>
+      {conversationId && (
+        <>
+          <div className="h-16">
+            <div>Copilot</div>
+          </div>
+          <div style={{ position: "relative", height: "500px" }}>
+            <MainContainer>
+              <ChatContainer>
+                <MessageList>
+                  {msg.map((messageEvent, index) => {
+                    switch (messageEvent.role) {
+                      case "user":
+                        return (
+                          <Message
+                            key={index}
+                            model={{
+                              message: messageEvent.content,
+                              sentTime: "just now",
+                              sender: messageEvent.name,
+                              position: "single",
+                              direction: "outgoing",
+                            }}
+                            avatarPosition="tr"
+                          ></Message>
+                        );
+                      case "system":
+                        return (
+                          <Message
+                            key={index}
+                            model={{
+                              message: messageEvent.content,
+                              sentTime: "just now",
+                              sender: messageEvent.name,
+                              position: "single",
+                              direction: "incoming",
+                            }}
+                            avatarPosition="tr"
+                          ></Message>
+                        );
+                      case "initial":
+                        return (
+                          <Message
+                            key={index}
+                            model={{
+                              message: messageEvent.content,
+                              sentTime: "just now",
+                              sender: messageEvent.name,
+                              position: "single",
+                              direction: "outgoing",
+                            }}
+                            avatarPosition="tl"
+                          >
+                            <Message.HtmlContent html={messageEvent.content} />
+                          </Message>
+                        );
+                      default:
+                        return null;
+                    }
+                  })}
+
+                  <Message
+                    model={{
+                      message: "Hey, I am your Copilot",
+                      sentTime: "just now",
+                      sender: "Joe",
+                      direction: "incoming",
+                      position: "single",
+                    }}
+                  />
+                  <Message
+                    model={{
+                      message:
+                        "I am here to answer your question about Vertex product.",
+                      sentTime: "just now",
+                      sender: "Joe",
+                      direction: "incoming",
+                      position: "single",
+                    }}
+                  />
+                </MessageList>
+                <MessageInput
+                  placeholder={"Type a message..."}
+                  onSend={sendUserMessage}
+                  attachButton={false}
+                />
+              </ChatContainer>
+            </MainContainer>
+          </div>
+        </>
+      )}
 
       {/* <button
         onClick={handleChatClick}

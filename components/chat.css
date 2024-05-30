@@ -1,0 +1,16 @@
+.cs-message--incoming .cs-message__content {
+  background-color: #f6f6f6;
+}
+
+.cs-message--outgoing .cs-message__content {
+  background-color: #018199;
+  color: white;
+}
+
+.cs-message.cs-message--outgoing.cs-message--single .cs-message__content {
+  border-radius: 22px;
+}
+
+.cs-message.cs-message--incoming.cs-message--single .cs-message__content {
+  border-radius: 22px;
+}
