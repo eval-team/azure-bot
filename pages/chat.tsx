@@ -5,7 +5,7 @@ import React from 'react';
 
 const Chat = () => {
   return (
-    <div>
+    <div className="bg-neutral-600">
       <h1>Chat Page</h1>
       <ChatComponent></ChatComponent>
     </div>

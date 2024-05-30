@@ -2,13 +2,13 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const { token, conversationId, message } = req.body;
+    const { token, conversationId, message, user } = req.body;
 
     try {
         // Send a message
         await axios.post(`https://directline.botframework.com/v3/directline/conversations/${conversationId}/activities`, {
             type: 'message',
-            from: { id: 'user1' },
+            from: { id: user },
             text: message
         }, {
             headers: {
