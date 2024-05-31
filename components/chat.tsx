@@ -32,7 +32,7 @@ const ChatComponent = () => {
   const [messages, setMessages] = useState([]);
   const [msg, setMsg] = useState<MessageModel[]>([]);
   const [input, setInput] = useState("");
-  //   const [openSideSheet, setOpenSideSheet] = useState(false);
+  const [openSideSheet, setOpenSideSheet] = useState(false);
 
   const getToken = async () => {
     const response = await axios.get("/api/token");
@@ -44,6 +44,8 @@ const ChatComponent = () => {
   }, []);
 
   const startConversation = async () => {
+    setOpenSideSheet(true);
+
     const response = await axios.post("/api/conversation", { token });
     setConversationId(response.data.conversationId);
   };
@@ -88,122 +90,40 @@ const ChatComponent = () => {
   console.log(11, msg);
 
   return (
-    <div>
+    <div className="mx-2 flex items-center">
       {/* <button onClick={getToken}>Get Token</button> */}
-      <button onClick={startConversation} className="ml-2">
+      <button
+        type="button"
+        className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+        onClick={startConversation}
+      >
         Start Conversation
       </button>
-      <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Type a message"
-      />
-      <button onClick={sendMessage}>Send</button>
+      <div className="ml-1">
+        <input
+          type="text"
+          name="message"
+          id="message"
+          className="w-48 rounded-md border-0 p-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
+          placeholder="Type a message"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+      </div>
+      <button
+        type="button"
+        className="rounded-full ml-1 bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+        onClick={sendMessage}
+      >
+        Send
+      </button>
       <div>
         {messages.map((msg, index) => (
           <div key={index}>{msg["text"]}</div>
         ))}
       </div>
 
-      {conversationId && (
-        <>
-          <div className="h-16">
-            <div>Copilot</div>
-          </div>
-          <div style={{ position: "relative", height: "500px" }}>
-            <MainContainer>
-              <ChatContainer>
-                <MessageList>
-                  {msg.map((messageEvent, index) => {
-                    switch (messageEvent.role) {
-                      case "user":
-                        return (
-                          <Message
-                            key={index}
-                            model={{
-                              message: messageEvent.content,
-                              sentTime: "just now",
-                              sender: messageEvent.name,
-                              position: "single",
-                              direction: "outgoing",
-                            }}
-                            avatarPosition="tr"
-                          ></Message>
-                        );
-                      case "system":
-                        return (
-                          <Message
-                            key={index}
-                            model={{
-                              message: messageEvent.content,
-                              sentTime: "just now",
-                              sender: messageEvent.name,
-                              position: "single",
-                              direction: "incoming",
-                            }}
-                            avatarPosition="tr"
-                          ></Message>
-                        );
-                      case "initial":
-                        return (
-                          <Message
-                            key={index}
-                            model={{
-                              message: messageEvent.content,
-                              sentTime: "just now",
-                              sender: messageEvent.name,
-                              position: "single",
-                              direction: "outgoing",
-                            }}
-                            avatarPosition="tl"
-                          >
-                            <Message.HtmlContent html={messageEvent.content} />
-                          </Message>
-                        );
-                      default:
-                        return null;
-                    }
-                  })}
-
-                  <Message
-                    model={{
-                      message: "Hey, I am your Copilot",
-                      sentTime: "just now",
-                      sender: "Joe",
-                      direction: "incoming",
-                      position: "single",
-                    }}
-                  />
-                  <Message
-                    model={{
-                      message:
-                        "I am here to answer your question about Vertex product.",
-                      sentTime: "just now",
-                      sender: "Joe",
-                      direction: "incoming",
-                      position: "single",
-                    }}
-                  />
-                </MessageList>
-                <MessageInput
-                  placeholder={"Type a message..."}
-                  onSend={sendUserMessage}
-                  attachButton={false}
-                />
-              </ChatContainer>
-            </MainContainer>
-          </div>
-        </>
-      )}
-
-      {/* <button
-        onClick={handleChatClick}
-        className="text-sm font-semibold leading-6 p-2 text-gray-900 hover:text-gray-500 lg:ml-4"
-      >
-        Chat
-      </button> */}
-
-      {/* <Transition show={openSideSheet} as={Fragment}>
+      <Transition show={openSideSheet} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={setOpenSideSheet}>
           <TransitionChild
             as={Fragment}
@@ -230,35 +150,112 @@ const ChatComponent = () => {
                   leaveTo="translate-x-full"
                 >
                   <DialogPanel className="pointer-events-auto relative w-screen max-w-md">
-                    <TransitionChild
-                      as={Fragment}
-                      enter="ease-in-out duration-500"
-                      enterFrom="opacity-0"
-                      enterTo="opacity-100"
-                      leave="ease-in-out duration-500"
-                      leaveFrom="opacity-100"
-                      leaveTo="opacity-0"
-                    >
-                      <div className="absolute left-0 top-0 -ml-8 flex pr-2 pt-4 sm:-ml-10 sm:pr-4">
-                        <button
-                          type="button"
-                          className="relative rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                          onClick={() => setOpenSideSheet(false)}
-                        >
-                          <span className="absolute -inset-2.5" />
-                          <span className="sr-only">Close panel</span>
-                          <XMarkIcon className="h-5 w-5" aria-hidden="true" />
-                        </button>
-                      </div>
-                    </TransitionChild>
-                    <div className="flex h-full flex-col overflow-y-scroll bg-rose-50 py-4 shadow-xl">
-                      <div className="px-4 sm:px-6 border-b pb-2 border-rose-300">
-                        <DialogTitle className="text-base font-semibold leading-6 text-gray-900">
-                          Chat
-                        </DialogTitle>
+                    <div className="flex h-full flex-col overflow-y-scroll bg-[#c0e8ef] shadow-xl">
+                      <div className="px-4 sm:px-6 py-2 flex items-center justify-between">
+                        <div>
+                          <DialogTitle className="text-base font-semibold leading-6 text-gray-900">
+                            Copilot
+                          </DialogTitle>
+                          <div className="text-sm font-semibold text-gray-900">
+                            Today
+                          </div>
+                        </div>
+
+                        <div className="flex items-center">
+                          <button
+                            type="button"
+                            className="relative rounded-md text-black hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-700"
+                            onClick={() => setOpenSideSheet(false)}
+                          >
+                            <span className="sr-only">Close panel</span>
+                            <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+                          </button>
+                        </div>
                       </div>
                       <div className="relative flex-1">
-                        <ChatScope />
+                        <MainContainer>
+                          <ChatContainer>
+                            <MessageList>
+                              {msg.map((messageEvent, index) => {
+                                switch (messageEvent.role) {
+                                  case "user":
+                                    return (
+                                      <Message
+                                        key={index}
+                                        model={{
+                                          message: messageEvent.content,
+                                          sentTime: "just now",
+                                          sender: messageEvent.name,
+                                          position: "single",
+                                          direction: "outgoing",
+                                        }}
+                                        avatarPosition="tr"
+                                      ></Message>
+                                    );
+                                  case "system":
+                                    return (
+                                      <Message
+                                        key={index}
+                                        model={{
+                                          message: messageEvent.content,
+                                          sentTime: "just now",
+                                          sender: messageEvent.name,
+                                          position: "single",
+                                          direction: "incoming",
+                                        }}
+                                        avatarPosition="tr"
+                                      ></Message>
+                                    );
+                                  case "initial":
+                                    return (
+                                      <Message
+                                        key={index}
+                                        model={{
+                                          message: messageEvent.content,
+                                          sentTime: "just now",
+                                          sender: messageEvent.name,
+                                          position: "single",
+                                          direction: "outgoing",
+                                        }}
+                                        avatarPosition="tl"
+                                      >
+                                        <Message.HtmlContent
+                                          html={messageEvent.content}
+                                        />
+                                      </Message>
+                                    );
+                                  default:
+                                    return null;
+                                }
+                              })}
+
+                              <Message
+                                model={{
+                                  message: "Hey, I am your Copilot",
+                                  sentTime: "just now",
+                                  sender: "Joe",
+                                  direction: "incoming",
+                                  position: "single",
+                                }}
+                              />
+                              <Message
+                                model={{
+                                  message:
+                                    "I am here to answer your question about Vertex product.",
+                                  sentTime: "just now",
+                                  sender: "Joe",
+                                  direction: "incoming",
+                                  position: "single",
+                                }}
+                              />
+                            </MessageList>
+                            <MessageInput
+                              placeholder={"Type a message..."}
+                              onSend={sendUserMessage}
+                              attachButton={false}
+                            />
+                          </ChatContainer>
+                        </MainContainer>
                       </div>
                     </div>
                   </DialogPanel>
@@ -267,7 +264,7 @@ const ChatComponent = () => {
             </div>
           </div>
         </Dialog>
-      </Transition> */}
+      </Transition>
     </div>
   );
 };

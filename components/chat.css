@@ -14,3 +14,47 @@
 .cs-message.cs-message--incoming.cs-message--single .cs-message__content {
   border-radius: 22px;
 }
+
+.cs-message-input {
+  flex-direction: column;
+}
+
+.cs-chat-container
+  .cs-message-input
+  .cs-message-input__content-editor-wrapper:first-child {
+  margin: 0 14px;
+  border: 1px solid black;
+  background-color: #ffffff;
+  border-radius: 0;
+}
+
+.cs-message-input__tools {
+  flex-direction: column;
+}
+
+.cs-message-input__content-editor-container {
+  min-height: 62px;
+  max-height: 62px;
+}
+
+.cs-message-input__content-editor {
+  background-color: #ffffff;
+}
+
+/* .cs-message-list__scroll-wrapper {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.cs-message-list__scroll-wrapper > .cs-message:first-child {
+  margin-bottom: 2.65em;
+}
+
+.cs-message.cs-message--incoming.cs-message--single:not(:first-child) {
+  margin-bottom: 0.4em;
+}
+
+.cs-message.cs-message--outgoing.cs-message--single:not(:first-child) {
+  margin-bottom: 0.4em;
+  margin-top: 0;
+} */

@@ -2,10 +2,11 @@
 
 import ChatComponent from '@/components/chat';
 import React from 'react';
+import "@/app/globals.css";
 
 const Chat = () => {
   return (
-    <div className="bg-neutral-600">
+    <div>
       <h1>Chat Page</h1>
       <ChatComponent></ChatComponent>
     </div>
