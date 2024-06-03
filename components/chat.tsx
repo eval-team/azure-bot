@@ -17,6 +17,7 @@ import {
 } from "@chatscope/chat-ui-kit-react";
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import "./chat.css";
+import { useSocket } from "@/context/socket-context";
 
 interface MessageModel {
   role: string;
@@ -25,8 +26,7 @@ interface MessageModel {
 }
 
 const ChatComponent = () => {
-  const [messageEvents, setMessageEvents] = useState([]);
-
+  const { initializeSocket, socket } = useSocket();
   const [token, setToken] = useState("");
   const [conversationId, setConversationId] = useState("");
   const [streamUrl, setStreamUrl] = useState("");
@@ -50,8 +50,32 @@ const ChatComponent = () => {
     const response = await axios.post("/api/conversation", { token });
     setConversationId(response.data.conversationId);
     setStreamUrl(response.data.streamUrl);
-    localStorage.setItem('streamUrl', response.data.streamUrl);
-  };  
+    localStorage.setItem("streamUrl", response.data.streamUrl);
+    initializeSocket(response.data.streamUrl);
+  };
+
+  useEffect(() => {
+    if (socket) {
+      socket.onmessage = (event: any) => {
+        const message = JSON.parse(event.data);
+        // setMessages((prevMessages) => [...prevMessages, message]);
+
+        setMsg((prevMessages) => [
+          ...message.activities.map((activity: any) => ({
+            role: activity.from.id,
+            content: activity.text,
+            name: activity.from.id,
+          })),
+        ]);
+      };
+    }
+
+    return () => {
+      if (socket) {
+        socket.onmessage = null;
+      }
+    };
+  }, [socket]);
 
   const sendMessage = async () => {
     const response = await axios.post("/api/message", {
@@ -60,13 +84,13 @@ const ChatComponent = () => {
       message: input,
       user: "system",
     });
-    setMsg((prevMessages) => [
-      ...response.data.activities.map((activity: any) => ({
-        role: activity.from.id,
-        content: activity.text,
-        name: activity.from.id,
-      })),
-    ]);
+    // setMsg((prevMessages) => [
+    //   ...response.data.activities.map((activity: any) => ({
+    //     role: activity.from.id,
+    //     content: activity.text,
+    //     name: activity.from.id,
+    //   })),
+    // ]);
   };
 
   const sanitizeContent = (content: string) => {
@@ -90,7 +114,6 @@ const ChatComponent = () => {
     ]);
   };
 
-  console.log(11, msg);
 
   return (
     <div className="mx-2 flex items-center">
