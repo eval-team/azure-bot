@@ -29,6 +29,7 @@ const ChatComponent = () => {
 
   const [token, setToken] = useState("");
   const [conversationId, setConversationId] = useState("");
+  const [streamUrl, setStreamUrl] = useState("");
   const [messages, setMessages] = useState([]);
   const [msg, setMsg] = useState<MessageModel[]>([]);
   const [input, setInput] = useState("");
@@ -48,7 +49,9 @@ const ChatComponent = () => {
 
     const response = await axios.post("/api/conversation", { token });
     setConversationId(response.data.conversationId);
-  };
+    setStreamUrl(response.data.streamUrl);
+    localStorage.setItem('streamUrl', response.data.streamUrl);
+  };  
 
   const sendMessage = async () => {
     const response = await axios.post("/api/message", {
