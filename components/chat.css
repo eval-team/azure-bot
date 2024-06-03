@@ -1,3 +1,7 @@
+.cs-message-list {
+  height: 753px;
+}
+
 .cs-message--incoming .cs-message__content {
   background-color: #f6f6f6;
 }
