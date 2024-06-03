@@ -50,7 +50,8 @@ const ChatComponent = () => {
     const response = await axios.post("/api/conversation", { token });
     setConversationId(response.data.conversationId);
     setStreamUrl(response.data.streamUrl);
-    localStorage.setItem("streamUrl", response.data.streamUrl);
+    localStorage.setItem("token", response.data.token);
+    localStorage.setItem("conversationId", response.data.conversationId);
     initializeSocket(response.data.streamUrl);
   };
 
@@ -61,6 +62,7 @@ const ChatComponent = () => {
         // setMessages((prevMessages) => [...prevMessages, message]);
 
         setMsg((prevMessages) => [
+          ...prevMessages,
           ...message.activities.map((activity: any) => ({
             role: activity.from.id,
             content: activity.text,
@@ -105,15 +107,16 @@ const ChatComponent = () => {
       message: cleanContent,
       user: "user",
     });
-    setMsg((prevMessages) => [
-      ...response.data.activities.map((activity: any) => ({
-        role: activity.from.id,
-        content: activity.text,
-        name: activity.from.id,
-      })),
-    ]);
+    // setMsg((prevMessages) => [
+    //   ...response.data.activities.map((activity: any) => ({
+    //     role: activity.from.id,
+    //     content: activity.text,
+    //     name: activity.from.id,
+    //   })),
+    // ]);
   };
 
+  console.log("msg", msg);
 
   return (
     <div className="mx-2 flex items-center">
