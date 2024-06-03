@@ -60,12 +60,12 @@ const ChatComponent = () => {
           const message = JSON.parse(event.data);
 
           setMsg((prevMessages) => [
-            ...prevMessages,
             ...message.activities.map((activity: any) => ({
               role: activity.from.id,
               content: activity.text,
               name: activity.from.id,
             })),
+            ...prevMessages,
           ]);
         }
       };

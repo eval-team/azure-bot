@@ -1,4 +1,4 @@
-.scrollbar-container{
+.scrollbar-container {
   display: flex;
   flex-direction: column-reverse;
 }
@@ -50,11 +50,6 @@
   background-color: #ffffff;
 }
 
-/* .cs-message-list__scroll-wrapper {
-  display: flex;
-  flex-direction: column-reverse;
-}
-
 .cs-message-list__scroll-wrapper > .cs-message:first-child {
   margin-bottom: 2.65em;
 }
@@ -66,4 +61,4 @@
 .cs-message.cs-message--outgoing.cs-message--single:not(:first-child) {
   margin-bottom: 0.4em;
   margin-top: 0;
-} */
+}
