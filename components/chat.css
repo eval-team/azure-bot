@@ -1,3 +1,8 @@
+.scrollbar-container{
+  display: flex;
+  flex-direction: column-reverse;
+}
+
 .cs-message-list {
   height: 753px;
 }
