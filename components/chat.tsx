@@ -56,16 +56,18 @@ const ChatComponent = () => {
   useEffect(() => {
     if (socket) {
       socket.onmessage = (event: any) => {
-        const message = JSON.parse(event.data);
+        if (event.data) {
+          const message = JSON.parse(event.data);
 
-        setMsg((prevMessages) => [
-          ...prevMessages,
-          ...message.activities.map((activity: any) => ({
-            role: activity.from.id,
-            content: activity.text,
-            name: activity.from.id,
-          })),
-        ]);
+          setMsg((prevMessages) => [
+            ...prevMessages,
+            ...message.activities.map((activity: any) => ({
+              role: activity.from.id,
+              content: activity.text,
+              name: activity.from.id,
+            })),
+          ]);
+        }
       };
     }
 
