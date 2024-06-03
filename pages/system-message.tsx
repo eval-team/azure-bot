@@ -1,16 +1,9 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "@/app/globals.css";
-
-interface MessageModel {
-  role: string;
-  content: string;
-  name: string;
-}
 
 const systemMessage = () => {
   const [input, setInput] = useState("");
-  const [msg, setMsg] = useState<MessageModel[]>([]);
 
   const sendMessage = async () => {
     const token = localStorage.getItem("token");
@@ -21,13 +14,6 @@ const systemMessage = () => {
       message: input,
       user: "system",
     });
-    // setMsg((prevMessages) => [
-    //   ...response.data.activities.map((activity: any) => ({
-    //     role: activity.from.id,
-    //     content: activity.text,
-    //     name: activity.from.id,
-    //   })),
-    // ]);
   };
 
   return (

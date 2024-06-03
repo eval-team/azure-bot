@@ -30,9 +30,7 @@ const ChatComponent = () => {
   const [token, setToken] = useState("");
   const [conversationId, setConversationId] = useState("");
   const [streamUrl, setStreamUrl] = useState("");
-  const [messages, setMessages] = useState([]);
   const [msg, setMsg] = useState<MessageModel[]>([]);
-  const [input, setInput] = useState("");
   const [openSideSheet, setOpenSideSheet] = useState(false);
 
   const getToken = async () => {
@@ -59,7 +57,6 @@ const ChatComponent = () => {
     if (socket) {
       socket.onmessage = (event: any) => {
         const message = JSON.parse(event.data);
-        // setMessages((prevMessages) => [...prevMessages, message]);
 
         setMsg((prevMessages) => [
           ...prevMessages,
@@ -79,22 +76,6 @@ const ChatComponent = () => {
     };
   }, [socket]);
 
-  const sendMessage = async () => {
-    const response = await axios.post("/api/message", {
-      token,
-      conversationId,
-      message: input,
-      user: "system",
-    });
-    // setMsg((prevMessages) => [
-    //   ...response.data.activities.map((activity: any) => ({
-    //     role: activity.from.id,
-    //     content: activity.text,
-    //     name: activity.from.id,
-    //   })),
-    // ]);
-  };
-
   const sanitizeContent = (content: string) => {
     return content.replace(/<[^>]*>?/gm, "");
   };
@@ -107,20 +88,10 @@ const ChatComponent = () => {
       message: cleanContent,
       user: "user",
     });
-    // setMsg((prevMessages) => [
-    //   ...response.data.activities.map((activity: any) => ({
-    //     role: activity.from.id,
-    //     content: activity.text,
-    //     name: activity.from.id,
-    //   })),
-    // ]);
   };
-
-  console.log("msg", msg);
 
   return (
     <div className="mx-2 flex items-center">
-      {/* <button onClick={getToken}>Get Token</button> */}
       <button
         type="button"
         className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
@@ -128,29 +99,6 @@ const ChatComponent = () => {
       >
         Start Conversation
       </button>
-      <div className="ml-1">
-        <input
-          type="text"
-          name="message"
-          id="message"
-          className="w-48 rounded-md border-0 p-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400"
-          placeholder="Type a message"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-        />
-      </div>
-      <button
-        type="button"
-        className="rounded-full ml-1 bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-        onClick={sendMessage}
-      >
-        Send
-      </button>
-      <div>
-        {messages.map((msg, index) => (
-          <div key={index}>{msg["text"]}</div>
-        ))}
-      </div>
 
       <Transition show={openSideSheet} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={setOpenSideSheet}>
